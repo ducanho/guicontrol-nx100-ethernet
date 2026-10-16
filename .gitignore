@@ -1,0 +1,13 @@
+.venv/
+.runtime/
+.ruff_cache/
+__pycache__/
+*.pyc
+
+logs/
+
+.vscode/
+.idea/
+
+Thumbs.db
+.DS_Store

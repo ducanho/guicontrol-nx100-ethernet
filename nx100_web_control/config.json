@@ -1,0 +1,29 @@
+{
+  "robot_ip": "192.168.255.1",
+  "robot_port": 80,
+  "timeout_seconds": 3,
+  "poll_interval_ms": 1000,
+  "auto_send_delay_ms": 400,
+  "move_timeout_seconds": 60,
+  "tolerance": {"xyz_mm": 1.0, "angle_deg": 0.5},
+  "speed": {
+    "movl": {"min": 0.1, "max": 100, "default": 5, "step": 0.1, "unit": "mm/s"},
+    "movj": {"min": 0.01, "max": 100, "default": 2, "step": 0.01, "unit": "%"}
+  },
+  "cartesian": {
+    "x": {"min": -2000, "max": 2000, "step": 0.001, "nudge": 1, "unit": "mm"},
+    "y": {"min": -2000, "max": 2000, "step": 0.001, "nudge": 1, "unit": "mm"},
+    "z": {"min": -500, "max": 2500, "step": 0.001, "nudge": 1, "unit": "mm"},
+    "rx": {"min": -180, "max": 180, "step": 0.01, "nudge": 0.1, "unit": "deg"},
+    "ry": {"min": -180, "max": 180, "step": 0.01, "nudge": 0.1, "unit": "deg"},
+    "rz": {"min": -180, "max": 180, "step": 0.01, "nudge": 0.1, "unit": "deg"}
+  },
+  "joint": {
+    "s": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"},
+    "l": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"},
+    "u": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"},
+    "r": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"},
+    "b": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"},
+    "t": {"min": -100000, "max": 100000, "step": 1, "nudge": 100, "unit": "pulse"}
+  }
+}

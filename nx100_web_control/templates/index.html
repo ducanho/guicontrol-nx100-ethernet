@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Local manual control panel for Yaskawa NX100 UP50N">
+  <title>NX100 · UP50N Control</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="/static/js/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="identity"><span class="brand">YASKAWA<span class="brand-dot">.</span></span><div class="brand-divider"></div><div><h1>NX100 <span>/ UP50N CONTROL</span></h1><p>LOCAL MANUAL CONTROL PANEL</p></div></div>
+      <div class="header-right"><span id="modeBadge" class="badge">LOADING</span><span class="local-label">● LOCAL HOST</span></div>
+    </header>
+    <div id="mockBanner" class="mock-banner" hidden>SIMULATION MODE · Không kết nối robot thật. Joint pulse là dữ liệu mẫu độc lập.</div>
+    <section class="connection-bar" aria-label="Connection">
+      <span id="connection" class="connection disconnected"><i></i> DISCONNECTED</span>
+      <label>ROBOT IP<input id="ip" value="192.168.255.1" autocomplete="off" aria-label="Robot IP"></label>
+      <label class="port">PORT<input id="port" type="number" min="1" max="65535" value="80"></label>
+      <button id="connect" class="primary">CONNECT <span>↗</span></button><button id="disconnect" disabled>DISCONNECT</button>
+      <div class="poll-indicator"><i id="heartbeat"></i><span id="freshness">No status received</span></div>
+    </section>
+    <section id="statusGrid" class="status-grid" aria-label="Robot status"></section>
+    <div class="workspace">
+      <main class="panel targets">
+        <div class="panel-top"><div><span class="eyebrow">01 / MANUAL POSITIONING</span><h2>Target position</h2></div><span id="frameLabel" class="frame-label">BASE FRAME · ABSOLUTE</span></div>
+        <div class="tabs" role="tablist" aria-label="Control mode"><button class="tab active" id="cartTab" role="tab" aria-selected="true">CARTESIAN XYZ</button><button class="tab" id="jointTab" role="tab" aria-selected="false">JOINT / PULSE</button></div>
+        <div class="motion-row"><div class="motion-select"><label for="motion">MOTION</label><select id="motion"><option>MOVL</option><option selected>MOVJ</option></select><span id="motionHint">Joint motion · Cartesian target</span></div><span class="small-tag">LIVE POSITION</span></div>
+        <div id="jointNotice" class="notice" hidden>Đọc S/L/U/R/B/T theo pulse. MOVE JOINT chưa hỗ trợ: module hiện tại chỉ có MOVJ nhận đích Cartesian.</div>
+        <div id="axes" class="axes"></div>
+        <p id="autoNotice" class="notice">Nhập số: nhấn ENTER mới chạy · Slider / + −: tự gửi sau 400 ms ngừng thay đổi.</p>
+        <p class="range-note">Vị trí hiện tại cập nhật tự động. Range UI không phải giới hạn an toàn của robot.</p>
+        <div class="target-actions"><div><span class="eyebrow">LIVE POSITION</span><p id="referenceInfo">Chờ kết nối để đọc vị trí realtime.</p></div><button id="reset">↺ &nbsp; RESET UI</button></div>
+      </main>
+      <aside class="side-column">
+        <section class="panel speed-panel"><div class="panel-top"><div><span class="eyebrow">02 / MOTION RATE</span><h2>Speed</h2></div><span class="small-tag">NEXT MOVE</span></div>
+          <div class="speed-display"><input id="speedNumber" type="number" aria-label="Speed"><span id="speedUnit">mm/s</span></div>
+          <div class="speed-control"><button id="speedMinus" aria-label="Decrease speed">−</button><input type="range" id="speedSlider" aria-label="Speed slider"><button id="speedPlus" aria-label="Increase speed">+</button></div>
+          <div class="range-labels"><span id="speedMin"></span><span id="speedMax"></span></div>
+          <p>Áp dụng cho lần MOVE tiếp theo.</p>
+        </section>
+        <section class="panel operation-panel"><span class="eyebrow">03 / AUTO CONTROL</span><div id="readiness" class="readiness">CONNECT TO BEGIN</div><p id="blockedReason">Kết nối để bắt đầu đọc realtime.</p>
+          <button id="hold" class="hold-button" disabled>Ⅱ &nbsp; HOLD</button><p class="hardware-note">Software HOLD ≠ E-STOP phần cứng</p>
+          <button id="readStatus" class="wide subtle" disabled>↻ &nbsp; READ STATUS</button>
+        </section>
+        <section class="panel tolerance"><span class="eyebrow">COMPLETION TOLERANCE</span><div><span>XYZ <b id="xyzTolerance">±1 mm</b></span><span>RX / RY / RZ <b id="angleTolerance">±0.5°</b></span></div></section>
+      </aside>
+    </div>
+    <section class="panel feedback"><div><span class="eyebrow">MOTION FEEDBACK</span><strong id="motionPhase">IDLE</strong></div><p id="motionMessage">Kết nối để đọc realtime. Nhập số rồi Enter; slider / + − tự gửi.</p></section>
+    <section class="panel tracking"><div class="panel-top"><h2>Position monitor</h2><span id="positionTime" class="muted">—</span></div><div class="table-scroll"><table><thead><tr><th>BASE</th><th>X <small>mm</small></th><th>Y <small>mm</small></th><th>Z <small>mm</small></th><th>RX <small>deg</small></th><th>RY <small>deg</small></th><th>RZ <small>deg</small></th></tr></thead><tbody id="positionRows"></tbody></table></div></section>
+    <section class="panel log-panel"><div class="panel-top"><div class="log-title"><h2>Event log</h2><span class="small-tag">LIVE</span></div><label class="raw-toggle"><input type="checkbox" id="rawToggle"> SHOW RAW TX/RX</label></div><div id="log" class="event-log" aria-label="Event log"></div></section>
+    <footer><span>NX100 ETHERNET SERVER / HOST CONTROL</span><span>PC BACKEND → TCP :80 → NX100</span><span>PHASE 01 · MANUAL CONTROL</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
